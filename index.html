@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang = "en-US">
+    <head>
+        <meta charset = "utf-8"/>
+        <meta name = "viewport" content = "width = device - width, initial-scale = 1"/>
+        <link rel = "preconnect" href = "https://fonts.googleapis.com">
+        <link rel = "preconnect" href = "https://fonts.gstatic.com" crossorigin>
+        <link href = "https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel = "stylesheet">
+        <link href = "styles/style.css" rel = "stylesheet"/>
+        <script async src = "scripts/main.js"></script>
+        <title>TedAI Chat Bot</title>
+    </head>
+    <body>
+        <div class = "BotArea">
+            <header>
+                <h1>TedAI Chat</h1>
+                <div class = "BotSidebar" id = "BotSidebar">
+                    <button id = "botLogin" onclick = "loginAccount()">Login</button>
+                    <button id = "botRegister" onclick = "createAccount()">Register</button>
+                    <button id = "botDelete" onclick = "deleteAccount()">Delete</button>
+                </div>
+                <button id = "botSideButton" onclick = "document.getElementsByClassName( 'BotSidebar' )[0].classList.toggle( 'collapsed' )">☰</button>
+            </header>
+            <ul class = "BotMessages">
+                <li class = "incoming-message">
+                    <p>Welcome user!</p>
+                </li>
+            </ul>
+            <div class = "BotInput">
+                <textarea rows = "0" cols = "20"
+                          placeholder = "Type a message!"></textarea>
+                <button id = "botSend">Send</button>
+            </div>
+        </div>
+    </body>
+</html>

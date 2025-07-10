@@ -1,0 +1,198 @@
+const mInput = document.querySelector( '.BotInput textarea' );
+const bBtn = document.querySelector( '.BotInput button' );
+const bBox = document.querySelector( ".BotMessages" );
+let message;
+let userID = document.querySelector( "p" );
+
+// Ensures that menu bar is closed on startup
+document.getElementsByClassName( 'BotSidebar' )[ 0 ].classList.toggle( 'collapsed' );
+
+// Free OpenAI API Key for testing later
+const bAPI = "";
+
+// Creates list object and adds provided message to a specified class
+const bList = ( m, className ) => 
+{
+    const mList = document.createElement( "list" );
+    mList.classList.add( "mess", className );
+
+    let mContent = `<p>${ m }</p>`;
+    mList.innerHTML = mContent;
+
+    // Check if user entered special "!vp" command
+    if( m == "!vp" || m == "!VP" )
+    {
+        // Import special image
+        let vp = document.createElement( "img" );
+        vp.src = "images/uni.jpg"
+        vp.width = 320;
+        vp.height = 213;
+        vp.alt = "test";
+
+        // Add image to the text area
+        setTimeout( () => { bBox.appendChild( vp ); }, 500);
+    }
+
+    return mList;
+}
+
+const bInput = () => 
+{
+    message = mInput.value.trim();
+
+    // If the obtained message is invalid, return nothing
+    if( !message )
+    {
+        alert( "Type something!" );
+        return;
+    }
+
+    bBox.appendChild( bList( message, "outgoing-message" ) );
+    bBox.scrollTo( 0, bBox.scrollHeight );
+
+    let bSkip = false;
+
+    setTimeout( () => { 
+        if( message == "!vp" || message == "!VP" )
+        {
+            iLi = bList( "Uni!", "incoming-message" );
+            bSkip = true;
+        }
+        else if( message.substring( 0, 5 ) == "!echo" )
+        {
+            message = message.replace( "!echo", "" );
+            iLi = bList( "echo: " + message, "incoming-message" );
+            bSkip = true;
+        }
+        else
+            iLi = bList( "Thinking...", "incoming-message" );
+        
+        bBox.appendChild( iLi );
+        bBox.scrollTo( 0, bBox.scrollHeight );
+
+        if( bSkip == false )
+            bResponse( iLi );
+
+    }, 500 );
+
+    // Clear text input area
+    mInput.value = '';
+};
+
+const bResponse = ( bIncoming ) => {
+    const bURL = "Insert API URL Here";
+    const inputMessage = bIncoming.querySelector( "p" );
+
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${ bAPI }`
+        },
+        body: JSON.stringify ( {
+            "model": "Model",
+            "messages": [
+                {
+                    role: "user",
+                    content: message
+                }
+            ]
+        })
+    };
+
+    fetch( bURL, requestOptions )
+        .then( res => {
+            if( !res.ok ) {
+                throw new Error( "Connection Failed" );
+            }
+            return res.json();
+        } )
+        .then( data => {
+            inputMessage.textContent = data.choices[ 0 ].message.content;
+        } )
+        .catch( ( error ) => {
+            inputMessage.classList.add( "error" );
+            inputMessage.textContent = "Oops! Something went wrong. Please try again!";
+        } )
+        .finally( () => bBox.scrollTo( 0, bBox.scrollHeight ) );
+};
+
+function createAccount() 
+{
+    // Let user provide a username and password
+    const givenName = prompt( "Please enter your name" );
+    const givenPass = prompt( "Please enter your password" );
+
+    // Check if they entered anything into the prompts
+    if( !givenName || !givenPass )
+    {
+        alert( "A username and password is required!" );
+        createAccount(); 
+    }
+    else
+    {
+        localStorage.setItem( "name", userName );
+        localStorage.setItem( "pass", userPass );
+        userID.textContent = `Welcome ${ userName }!`;
+    }
+}
+
+function loginAccount()
+{
+    // Let user provide a username and password
+    const givenName = prompt( "Please enter your name" );
+    const givenPass = prompt( "Please enter your password" );
+
+    // Check if they entered anything into the prompts
+    if( !userName || !userPass )
+        alert( "This user doesn't exist. You should register!" );
+    else
+    {
+        const savedName = localStorage.getItem( "name" );
+        const savedPass = localStorage.getItem( "pass" );
+
+        if( ( savedName != givenName ) || ( savedPass != givenPass ) )
+            alert( "Your username or password is incorrect!" )
+        else
+            userID.textContent = `Welcome back ${ userName }!`;
+    }
+}
+
+function deleteAccount() 
+{
+    // Ask user if they wish to go through with the deletion
+    const userInput = prompt( "Are you sure you want to delete your account? Type 'YES' to confirm" );
+    
+    if( userInput != "YES" )
+        alert( "Deletion cancelled" );
+    else
+    {
+        localStorage.removeItem( "name" );
+        localStorage.removeItem( "pass" );
+        userID.textContent = `Welcome user!`;
+    }
+}
+
+bBtn.addEventListener( "click", bInput );
+
+// If the user presses enter while highlighting the textbox, it will
+// act as though they had clicked the "Send" button
+mInput.addEventListener( "keypress", function( event ) {
+    if( event.key === "Enter" )
+    {
+        event.preventDefault();
+        bBtn.click();
+    }
+} );
+
+// Check if a username or password is current stored for the user
+if( !localStorage.getItem( "name" ) || !localStorage.getItem( "pass" ) )
+{
+    userID.textContent = `Welcome user!`;
+    //createAccount();
+}
+else
+{
+    const storedName = localStorage.getItem( "name" );
+    userID.textContent = `Welcome ${ storedName }!`;
+}
