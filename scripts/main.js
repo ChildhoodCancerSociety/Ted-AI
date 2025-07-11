@@ -19,18 +19,18 @@ const bList = ( m, className ) =>
     let mContent = `<p>${ m }</p>`;
     mList.innerHTML = mContent;
 
-    // Check if user entered special "!vp" command
-    if( m == "!vp" || m == "!VP" )
+    // Check if user entered special "!ted" command
+    if( m == "!ted" || m == "!Ted" || m == "!TED" )
     {
         // Import special image
-        let vp = document.createElement( "img" );
-        vp.src = "images/uni.jpg"
-        vp.width = 320;
-        vp.height = 213;
-        vp.alt = "test";
+        let ted = document.createElement( "img" );
+        ted.src = "images/uni.jpg"
+        ted.width = 320;
+        ted.height = 213;
+        ted.alt = "test";
 
         // Add image to the text area
-        setTimeout( () => { bBox.appendChild( vp ); }, 500);
+        setTimeout( () => { bBox.appendChild( ted ); }, 500);
     }
 
     return mList;
@@ -53,7 +53,7 @@ const bInput = () =>
     let bSkip = false;
 
     setTimeout( () => { 
-        if( message == "!vp" || message == "!VP" )
+        if( message == "!ted" || message == "!Ted" || message == "!TED" )
         {
             iLi = bList( "Uni!", "incoming-message" );
             bSkip = true;
@@ -112,7 +112,7 @@ const bResponse = ( bIncoming ) => {
         } )
         .catch( ( error ) => {
             inputMessage.classList.add( "error" );
-            inputMessage.textContent = "Oops! Something went wrong. Please try again!";
+            inputMessage.textContent = "Something on our end broke. Please try again!";
         } )
         .finally( () => bBox.scrollTo( 0, bBox.scrollHeight ) );
 };
