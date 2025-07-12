@@ -1,14 +1,17 @@
 const mInput = document.querySelector( '.BotInput textarea' );
 const bBtn = document.querySelector( '.BotInput button' );
 const bBox = document.querySelector( ".BotMessages" );
-let message;
 let userID = document.querySelector( "p" );
+let message;
 
 // Ensures that menu bar is closed on startup
 document.getElementsByClassName( 'BotSidebar' )[ 0 ].classList.toggle( 'collapsed' );
 
-// Free OpenAI API Key for testing later
-const bAPI = "";
+// ----- Place valid API information here -----
+const bURL = "Insert API URL Here";
+const bModel = "Insert properly formatted model name here";
+const bAPI = "Insert API key here";
+// ----- Place valid API information here -----
 
 // Creates list object and adds provided message to a specified class
 const bList = ( m, className ) => 
@@ -80,7 +83,6 @@ const bInput = () =>
 };
 
 const bResponse = ( bIncoming ) => {
-    const bURL = "Insert API URL Here";
     const inputMessage = bIncoming.querySelector( "p" );
 
     const requestOptions = {
@@ -90,7 +92,7 @@ const bResponse = ( bIncoming ) => {
             "Authorization": `Bearer ${ bAPI }`
         },
         body: JSON.stringify ( {
-            "model": "Model",
+            "model": `${ bModel }`,
             "messages": [
                 {
                     role: "user",
