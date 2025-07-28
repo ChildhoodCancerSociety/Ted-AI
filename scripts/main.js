@@ -8,10 +8,13 @@ let message;
 document.getElementsByClassName( 'BotSidebar' )[ 0 ].classList.toggle( 'collapsed' );
 
 // ----- Place valid API information here -----
-const bURL = "Insert API URL Here";
+const bURL = "Insert API URL here";
 const bModel = "Insert properly formatted model name here";
 const bAPI = "Insert API key here";
 // ----- Place valid API information here -----
+
+// Sets name passed to the LLM (WIP)
+const bUser = "Ted";
 
 // Creates list object and adds provided message to a specified class
 const bList = ( m, className ) => 
@@ -33,7 +36,7 @@ const bList = ( m, className ) =>
         ted.alt = "test";
 
         // Add image to the text area
-        setTimeout( () => { bBox.appendChild( ted ); }, 500);
+        setTimeout( () => { bBox.appendChild( ted ); }, 600 );
     }
 
     return mList;
@@ -53,6 +56,7 @@ const bInput = () =>
     bBox.appendChild( bList( message, "outgoing-message" ) );
     bBox.scrollTo( 0, bBox.scrollHeight );
 
+    // If this is set to true, skip LLM response
     let bSkip = false;
 
     setTimeout( () => { 
@@ -76,10 +80,10 @@ const bInput = () =>
         if( bSkip == false )
             bResponse( iLi );
 
-    }, 500 );
+    }, 600 );
 
-    // Clear text input area
-    mInput.value = '';
+    // Visibly clears text from the input field, but doesn't change mInput
+    document.querySelector( '.BotInput textarea' ).value = "";
 };
 
 const bResponse = ( bIncoming ) => {
@@ -92,14 +96,9 @@ const bResponse = ( bIncoming ) => {
             "Authorization": `Bearer ${ bAPI }`
         },
         body: JSON.stringify ( {
-            "model": `${ bModel }`,
-            "messages": [
-                {
-                    role: "user",
-                    content: message
-                }
-            ]
-        })
+            "message": `${ mInput.value }`, 
+            "username": `${ bUser }`
+        } )
     };
 
     fetch( bURL, requestOptions )
@@ -110,7 +109,8 @@ const bResponse = ( bIncoming ) => {
             return res.json();
         } )
         .then( data => {
-            inputMessage.textContent = data.choices[ 0 ].message.content;
+            inputMessage.textContent = data.response;
+            mInput.value = '';
         } )
         .catch( ( error ) => {
             inputMessage.classList.add( "error" );
