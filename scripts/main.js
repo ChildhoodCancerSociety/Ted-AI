@@ -81,9 +81,6 @@ const bInput = () =>
             bResponse( iLi );
 
     }, 600 );
-
-    // Visibly clears text from the input field, but doesn't change mInput
-    document.querySelector( '.BotInput textarea' ).value = "";
 };
 
 const bResponse = ( bIncoming ) => {
