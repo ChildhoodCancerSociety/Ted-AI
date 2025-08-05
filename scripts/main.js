@@ -14,7 +14,7 @@ const bAPI = "Insert API key here";
 // ----- Place valid API information here -----
 
 // Sets name passed to the LLM (WIP)
-const bUser = "Ted";
+let bUser = "Guest";
 
 // Creates list object and adds provided message to a specified class
 const bList = ( m, className ) => 
@@ -79,12 +79,19 @@ const bInput = () =>
 
         if( bSkip == false )
             bResponse( iLi );
+        else
+            mInput.value = '';
 
     }, 600 );
 };
 
 const bResponse = ( bIncoming ) => {
     const inputMessage = bIncoming.querySelector( "p" );
+
+    if( localStorage.getItem( "name" ) && localStorage.getItem( "pass" ) )
+        bUser = localStorage.getItem( "name" );
+    else
+        bUser = "Guest";
 
     const requestOptions = {
         method: "POST",
@@ -112,6 +119,7 @@ const bResponse = ( bIncoming ) => {
         .catch( ( error ) => {
             inputMessage.classList.add( "error" );
             inputMessage.textContent = "Something on our end broke. Please try again!";
+            mInput.value = '';
         } )
         .finally( () => bBox.scrollTo( 0, bBox.scrollHeight ) );
 };
@@ -130,9 +138,10 @@ function createAccount()
     }
     else
     {
-        localStorage.setItem( "name", userName );
-        localStorage.setItem( "pass", userPass );
-        userID.textContent = `Welcome ${ userName }!`;
+        localStorage.setItem( "name", givenName );
+        localStorage.setItem( "pass", givenPass );
+        bUser = givenName;
+        userID.textContent = `Welcome ${ givenName }!`;
     }
 }
 
@@ -143,7 +152,7 @@ function loginAccount()
     const givenPass = prompt( "Please enter your password" );
 
     // Check if they entered anything into the prompts
-    if( !userName || !userPass )
+    if( !givenName || !givenPass )
         alert( "This user doesn't exist. You should register!" );
     else
     {
@@ -153,7 +162,10 @@ function loginAccount()
         if( ( savedName != givenName ) || ( savedPass != givenPass ) )
             alert( "Your username or password is incorrect!" )
         else
-            userID.textContent = `Welcome back ${ userName }!`;
+        {
+            bUser = savedName;
+            userID.textContent = `Welcome back ${ bUser }!`;
+        }
     }
 }
 
@@ -168,7 +180,8 @@ function deleteAccount()
     {
         localStorage.removeItem( "name" );
         localStorage.removeItem( "pass" );
-        userID.textContent = `Welcome user!`;
+        bUser = "Guest";
+        userID.textContent = `Welcome Guest!`;
     }
 }
 
@@ -187,11 +200,11 @@ mInput.addEventListener( "keypress", function( event ) {
 // Check if a username or password is current stored for the user
 if( !localStorage.getItem( "name" ) || !localStorage.getItem( "pass" ) )
 {
-    userID.textContent = `Welcome user!`;
+    userID.textContent = `Welcome Guest!`;
     //createAccount();
 }
 else
 {
-    const storedName = localStorage.getItem( "name" );
-    userID.textContent = `Welcome ${ storedName }!`;
+    bUser = localStorage.getItem( "name" );
+    userID.textContent = `Welcome ${ bUser }!`;
 }
